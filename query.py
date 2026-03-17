@@ -8,6 +8,15 @@ from langchain_core.output_parsers import StrOutputParser
 
 load_dotenv()
 
+# Fall back to Streamlit secrets if running in the cloud
+try:
+    import streamlit as st
+    if "OPENAI_API_KEY" in st.secrets:
+        os.environ["OPENAI_API_KEY"] = st.secrets["OPENAI_API_KEY"]
+except Exception:
+    pass
+
+
 def load_retriever(persist_dir: str = "./chroma_db", k: int = 3):
     """Load the persisted vector store and return a retriever."""
     embeddings = OpenAIEmbeddings(model = 'text-embedding-3-small')

@@ -7,6 +7,17 @@ from langchain_openai import OpenAIEmbeddings
 from langchain_chroma import Chroma
 
 load_dotenv()
+
+# Fall back to Streamlit secrets if running in the cloud
+try:
+    import streamlit as st
+    if "OPENAI_API_KEY" in st.secrets:
+        os.environn['OPENAI_API_KEY'] = st.secrets["OPENAI_API_KEY"]
+    if "NCBI_EMAIL" in st.secrets:
+        os.environ["NCBI_EMAIL"] = st.secrets["NCBI_EMAIL"]
+except Exception:
+    pass
+
 Entrez.email = os.getenv("NCBI_EMAIL")
 
 def fetch_pubmed_abstracts(query: str, max_results: int = 10) -> list[Document]:
