@@ -4,7 +4,7 @@ A retrieval-augmented generation (RAG) pipeline that answers research questions
 grounded in PubMed scientific literature. Built with LangChain, ChromaDB, and 
 the OpenAI API, deployed as an interactive Streamlit application.
 
-🔗 **[Live Demo](https://pubmedrag-biomedical-literature-assistant.streamlit.app/)** ← replace with your actual URL
+🔗 **[Live Demo](https://pubmedrag-biomedical-literature-assistant.streamlit.app/)**
 
 ---
 
