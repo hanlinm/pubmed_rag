@@ -18,12 +18,36 @@ except Exception:
 
 
 def load_retriever(persist_dir: str = "./chroma_db", k: int = 3):
-    """Load the persisted vector store and return a retriever."""
     embeddings = OpenAIEmbeddings(model = 'text-embedding-3-small')
-    vectorstore = Chroma(
-        persist_directory = persist_dir,
-        embedding_function = embeddings,
-    )
+    
+    # Use persisted store locallly, build in memory on cloud
+    if os.path.exists(persist_dir):
+        vectorstore = Chroma(
+            persist_directory = persist_dir,
+            embedding_function = embeddings,
+        )
+    else:
+        # Import annd rebuild from scratch on cloud
+        from ingest import fetch_pubmed_abstracts, build_vector_store
+        topics = [
+            "protein structure prediction deep learning",
+            "generative AI drug discovery small molecule",
+            "GLP-1 receptor agonist obesity diabetes",
+            "transformer models biomedical NLP",
+            "cancer immunotherapy machine learning",
+            "CRISPR gene editing machine learning",
+            "single cell RNA sequencing deep learning",
+            "clinical trial outcome prediction AI",
+            "antibiotic resistance prediction neural network",
+            "protein language models therapeutics"
+        ]
+
+        all_docs = []
+
+        for topic in topics:
+            all_docs.extend(fetch_pubmed_abstracts(topic, max_results = 10))
+        vectorstore = build_vector_store(all_docs, persist_dir=None)
+        
     # k=3 means it will fetch the 3 most relevant chunks for each question
     return vectorstore.as_retriever(search_kwargs={"k": k})
 

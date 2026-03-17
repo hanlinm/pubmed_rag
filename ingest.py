@@ -56,6 +56,11 @@ def fetch_pubmed_abstracts(query: str, max_results: int = 10) -> list[Document]:
     return documents
 
 def build_vector_store(documents: list[Document], persist_dir: str = "./chroma_db"):
+    import shutil
+
+    if persist_dir and os.path.exists(persist_dir):
+        shutil.rmtree(persist_dir)
+        print("Cleared existing vector store")
 
     # Step 1: split documents into smaller chunks
     splitter = RecursiveCharacterTextSplitter(
@@ -67,7 +72,7 @@ def build_vector_store(documents: list[Document], persist_dir: str = "./chroma_d
     print(f"Split {len(documents)} documents into {len(chunks)} chunks")
 
     # Step 2: embed chunks and store in ChromaDB
-    print("Embedding chunks... (this calls the OpenAI API, may take a moment)")
+    #print("Embedding chunks... (this calls the OpenAI API, may take a moment)")
     embeddings = OpenAIEmbeddings(model='text-embedding-3-small')
 
     vectorstore = Chroma.from_documents(
@@ -76,7 +81,7 @@ def build_vector_store(documents: list[Document], persist_dir: str = "./chroma_d
         persist_directory=persist_dir,
     )
 
-    print(f"Vector store built and saved to {persist_dir}")
+    print(f"Vector store ready")
     return vectorstore
 
 # Test it by running this file directly
